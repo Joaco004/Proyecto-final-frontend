@@ -3,12 +3,15 @@ import Layout from "../components/Layout"
 
 const Home = () => {
   const [products, setProducts] = useState([])
+  const [user, setUser] = useState(true)
 
   const fetchingProducts = async () => {
     try {
-      const response = await fetch("https://backend-utn.onrender.com/products")
+      const response = await fetch("https://backend-utn.onrender.com/products", {
+        method: "GET"
+      })
       const dataProducts = await response.json()
-      setProducts(dataProducts.data)
+      setProducts(dataProducts.data.reverse())
     } catch (e) {
       console.log("Error al traer los productos :(")
     }
@@ -17,6 +20,25 @@ const Home = () => {
   useEffect(() => {
     fetchingProducts()
   }, [])
+
+  const deleteProduct = async (idProduct) => {
+    if (!confirm("Esta seguro de que quieres borrar el producto")) {
+      return
+    }
+
+    try {
+      const response = await fetch(`https://backend-utn.onrender.com/products/${idProduct}`, {
+        method: "DELETE"
+      })
+      const dataResponse = await response.json()
+
+      setProducts(products.filter((p) => p._id !== idProduct))
+
+      alert(`${dataResponse.data.name} borrado con éxito.`)
+    } catch (error) {
+      console.log("Error al borrar el producto.")
+    }
+  }
 
   return (
     <Layout>
@@ -37,6 +59,8 @@ const Home = () => {
             <p><strong>Precio:</strong> ${p.price}</p>
             <p><strong>Stock:</strong> {p.stock}</p>
             <p><strong>Categoría:</strong> {p.category}</p>
+            <button>Actualizar</button>
+            {user && <button onClick={() => deleteProduct(p._id)}>Borrar</button>}
           </div>
         ))}
       </section>
