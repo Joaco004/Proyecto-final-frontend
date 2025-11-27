@@ -3,8 +3,18 @@ import Layout from "../components/Layout"
 import UpdateProduct from "../components/UpdateProduct"
 import { useAuth } from "../context/AuthContext"
 import { CATEGORIES } from "../constants/categories.js"
+import { ToastMessage } from "../components/ToastMessage.jsx"
 
 const Home = () => {
+  const initialErrorState = {
+    success: null,
+    notification: null,
+    error: {
+      fetch: null,
+      delete: null
+    }
+  }
+
   const [products, setProducts] = useState([])
   const [selectedProduct, setSelectedProduct] = useState(null)
   const [filters, setFilters] = useState({
@@ -14,19 +24,36 @@ const Home = () => {
     minPrice: 0,
     maxPrice: 0
   })
+  const [responseServer, setResponseServer] = useState(initialErrorState)
 
   // { id: '6925fe9645e9b029b62ac797', iat: 1764101665, exp: 1764105265 }
   const { user, token } = useAuth()
 
   const fetchingProducts = async (query = "") => {
+    setResponseServer(initialErrorState)
     try {
       const response = await fetch(`http://localhost:3000/products?${query}`, {
         method: "GET"
       })
       const dataProducts = await response.json()
       setProducts(dataProducts.data.reverse())
+      setResponseServer({
+        success: true,
+        notification: "Exito al cargar los productos",
+        error: {
+          ...responseServer.error,
+          fetch: true
+        }
+      })
     } catch (e) {
-      console.log("Error al traer los productos :(")
+      setResponseServer({
+        success: false,
+        notification: "Error al traer los datos",
+        error: {
+          ...responseServer.error,
+          fetch: false
+        }
+      })
     }
   }
 
@@ -57,7 +84,7 @@ const Home = () => {
 
       alert(`${dataResponse.data.name} borrado con éxito.`)
     } catch (error) {
-      console.log("Error al borrar el producto.")
+      // setResponseServer({ ...error, delete: "Error al borrar el producto." })
     }
   }
 
@@ -182,6 +209,9 @@ const Home = () => {
           </div>
         ))}
       </section>
+      {!responseServer.error.fetch && <ToastMessage color={"red"} msg={responseServer.notification} />}
+      {responseServer.success && <ToastMessage color={"green"} msg={responseServer.notification} />}
+      {/* {error.delete && <ToastMessage error={error.delete} color={"red"} />} */}
     </Layout>
   )
 }

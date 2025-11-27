@@ -6,6 +6,7 @@ import AddProduct from "../pages/AddProduct"
 import Login from "../pages/Login"
 import Register from "../pages/Register"
 import ProtectedRoute from "../components/ProtectedRoute"
+import Contact from "../pages/Contact"
 
 const RouterApp = () => {
   return (
@@ -21,6 +22,7 @@ const RouterApp = () => {
             </ProtectedRoute>
           }
         />
+        <Route path="/contacto" element={<Contact />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Register />} />
       </Routes>

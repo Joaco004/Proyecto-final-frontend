@@ -17,6 +17,7 @@ const Layout = ({ children }) => {
         <nav className="layout-nav">
           <Link to="/">Nuestros productos</Link>
           <Link to="/sobre-nosotros">Sobre nosotros</Link>
+          <Link to="/contacto">Contactanos</Link>
           {
             !user ?
               <>
