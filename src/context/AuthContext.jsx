@@ -10,7 +10,6 @@ const decodeJWT = (token) => {
   try {
     const base64Payload = token.split(".")[1];
     const payload = atob(base64Payload.replace(/-/g, "+").replace(/_/g, "/"));
-
     return JSON.parse(payload);
   } catch (error) {
     return null;
@@ -19,20 +18,20 @@ const decodeJWT = (token) => {
 
 
 const AuthProvider = ({ children }) => {
-  const savedToken = localStorage.getItem("token")
+  const savedToken = sessionStorage.getItem("token")
   const [token, setToken] = useState(savedToken || null)
   // 1 - ✅ si tengo token tengo usuario
   // 2 - descifrar el payload del token
   const [user, setUser] = useState(() => savedToken ? decodeJWT(savedToken) : null)
 
   const login = (token) => {
-    localStorage.setItem("token", token)
+    sessionStorage.setItem("token", token)
     setToken(token)
     setUser(decodeJWT(token))
   }
 
   const logout = () => {
-    localStorage.removeItem("token")
+    sessionStorage.removeItem("token")
     setToken(null)
     setUser(null)
   }

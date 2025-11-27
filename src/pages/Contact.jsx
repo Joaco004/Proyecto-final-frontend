@@ -15,9 +15,22 @@ export default function Contact() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(form);
+    try {
+      const response = await fetch("http://localhost:3000/email/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(form)
+      })
+      const dataResponse = await response.json()
+
+      console.log(dataResponse)
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   return (
