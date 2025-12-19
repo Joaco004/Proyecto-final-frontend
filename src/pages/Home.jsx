@@ -9,24 +9,20 @@ const Home = () => {
   const initialErrorState = {
     success: null,
     notification: null,
-    error: {
-      fetch: null,
-      delete: null
-    }
+    error: { fetch: null, delete: null }
   }
 
   const [products, setProducts] = useState([])
   const [selectedProduct, setSelectedProduct] = useState(null)
   const [filters, setFilters] = useState({
     name: "",
-    stock: 0,
+    stock: "",
     category: "",
-    minPrice: 0,
-    maxPrice: 0
+    minPrice: "",
+    maxPrice: ""
   })
   const [responseServer, setResponseServer] = useState(initialErrorState)
 
-  // { id: '6925fe9645e9b029b62ac797', iat: 1764101665, exp: 1764105265 }
   const { user, token } = useAuth()
 
   const fetchingProducts = async (query = "") => {
@@ -36,23 +32,20 @@ const Home = () => {
         method: "GET"
       })
       const dataProducts = await response.json()
-      setProducts(dataProducts.data.reverse())
+      
+      // Aseguramos que dataProducts.data exista, si no array vacio
+      setProducts(dataProducts.data ? dataProducts.data.reverse() : [])
+      
       setResponseServer({
         success: true,
         notification: "Exito al cargar los productos",
-        error: {
-          ...responseServer.error,
-          fetch: true
-        }
+        error: { ...responseServer.error, fetch: true }
       })
     } catch (e) {
       setResponseServer({
         success: false,
-        notification: "Error al traer los datos",
-        error: {
-          ...responseServer.error,
-          fetch: false
-        }
+        notification: "Error al traer los datos (Backend apagado?)",
+        error: { ...responseServer.error, fetch: false }
       })
     }
   }
@@ -62,9 +55,7 @@ const Home = () => {
   }, [])
 
   const deleteProduct = async (idProduct) => {
-    if (!confirm("Esta seguro de que quieres borrar el producto")) {
-      return
-    }
+    if (!confirm("Esta seguro de que quieres borrar el producto")) return
 
     try {
       const response = await fetch(`http://localhost:3000/products/${idProduct}`, {
@@ -75,16 +66,17 @@ const Home = () => {
       })
       const dataResponse = await response.json()
 
-      if (dataResponse.error) {
-        alert(dataResponse.error)
+      if (!response.ok) {
+        alert(dataResponse.error || "Error al borrar")
         return
       }
 
-      setProducts(products.filter((p) => p._id !== idProduct))
-
-      alert(`${dataResponse.data.name} borrado con éxito.`)
+      setProducts(products.filter((p) => (p._id || p.id) !== idProduct))
+      alert(`Producto borrado con éxito.`)
+      
     } catch (error) {
-      // setResponseServer({ ...error, delete: "Error al borrar el producto." })
+      console.log(error)
+      alert("Error de conexión")
     }
   }
 
@@ -93,20 +85,16 @@ const Home = () => {
   }
 
   const handleChange = (e) => {
-    setFilters({
-      ...filters,
-      [e.target.name]: e.target.value
-    })
+    setFilters({ ...filters, [e.target.name]: e.target.value })
   }
 
   const handleSubmit = (e) => {
     e.preventDefault()
-
     const query = new URLSearchParams()
-
+    // Solo agregamos al query si tienen valor real
     if (filters.name) query.append("name", filters.name)
     if (filters.stock) query.append("stock", filters.stock)
-    if (filters.category) query.append("category", filters.category)
+    if (filters.category && filters.category !== "Todas las categorias") query.append("category", filters.category)
     if (filters.minPrice) query.append("minPrice", filters.minPrice)
     if (filters.maxPrice) query.append("maxPrice", filters.maxPrice)
 
@@ -114,13 +102,16 @@ const Home = () => {
   }
 
   const handleResetFilters = () => {
-    setFilters({
-      name: "",
-      stock: 0,
-      category: "",
-      minPrice: 0,
-      maxPrice: 0
-    })
+    setFilters({ name: "", stock: "", category: "", minPrice: "", maxPrice: "" })
+    fetchingProducts() // Recargar sin filtros
+  }
+
+  // Helper para arreglar la URL de la imagen que viene del backend
+  const getImageUrl = (imgData) => {
+    if (!imgData) return "https://via.placeholder.com/150?text=Sin+Imagen";
+    // Si viene con backslashes de windows (uploads\file.jpg), los cambiamos a /
+    const cleanPath = imgData.replace(/\\/g, "/");
+    return `http://localhost:3000/${cleanPath}`;
   }
 
   return (
@@ -129,89 +120,64 @@ const Home = () => {
 
       <section className="page-section">
         <p>
-          Bienvenido {user && user.id} a nuestra tienda. Aquí encontrarás una amplia variedad de productos diseñados para satisfacer
-          tus necesidades. Nuestro compromiso es ofrecer calidad y confianza.
+          Bienvenido {user && user.email} a nuestra tienda. Aquí encontrarás una amplia variedad de productos.
         </p>
       </section>
 
-      <section >
+      <section>
         <form className="filters-form" onSubmit={handleSubmit}>
-          <input
-            type="text"
-            name="name"
-            placeholder="Buscar por nombre"
-            onChange={handleChange}
-            value={filters.name}
-          />
-          <input
-            type="number"
-            name="stock"
-            placeholder="Ingrese el stock"
-            onChange={handleChange}
-            value={filters.stock}
-          />
-          <select
-            name="category"
-            onChange={handleChange}
-            value={filters.category}
-          >
-            <option defaultValue>Todas las categorias</option>
-            {
-              CATEGORIES.map((category) =>
-                <option key={category.id}
-                  value={category.value}>{category.content}
-                </option>
-              )
-            }
+          <input type="text" name="name" placeholder="Buscar por nombre" onChange={handleChange} value={filters.name} />
+          <input type="number" name="stock" placeholder="Stock exacto" onChange={handleChange} value={filters.stock} />
+          <select name="category" onChange={handleChange} value={filters.category}>
+            <option value="">Todas las categorias</option>
+            {CATEGORIES.map((cat) => (
+              <option key={cat.id} value={cat.value}>{cat.content}</option>
+            ))}
           </select>
-          <input
-            type="number"
-            name="minPrice"
-            placeholder="Precio mínimo"
-            onChange={handleChange}
-            value={filters.minPrice}
-          />
-          <input
-            type="number"
-            name="maxPrice"
-            placeholder="Precio máximo"
-            onChange={handleChange}
-            value={filters.maxPrice}
-          />
+          <input type="number" name="minPrice" placeholder="Min $" onChange={handleChange} value={filters.minPrice} />
+          <input type="number" name="maxPrice" placeholder="Max $" onChange={handleChange} value={filters.maxPrice} />
           <button type="submit">Aplicar filtros</button>
-          <button type="button" onClick={handleResetFilters}>Cancelar</button>
+          <button type="button" onClick={handleResetFilters}>Limpiar</button>
         </form>
       </section>
 
-      {
-        selectedProduct &&
+      {selectedProduct && (
         <UpdateProduct
           product={selectedProduct}
           onClose={() => setSelectedProduct(null)}
-          onUpdate={fetchingProducts}
+          onUpdate={() => fetchingProducts()}
         />
-      }
+      )}
 
       <section className="products-grid">
         {products.map((p, i) => (
           <div key={i} className="product-card">
+            {/* IMAGEN DEL PRODUCTO */}
+            <div style={{width: '100%', height: '200px', overflow:'hidden', marginBottom: '10px'}}>
+               <img 
+                 src={getImageUrl(p.image)} 
+                 alt={p.name} 
+                 style={{width: '100%', height: '100%', objectFit: 'contain'}} 
+               />
+            </div>
+
             <h3>{p.name}</h3>
             <p>{p.description}</p>
             <p><strong>Precio:</strong> ${p.price}</p>
             <p><strong>Stock:</strong> {p.stock}</p>
             <p><strong>Categoría:</strong> {p.category}</p>
-            {
-              user && <div className="cont-btn">
+            {user && (
+              <div className="cont-btn">
                 <button onClick={() => handleUpdateProduct(p)}>Actualizar</button>
-                <button onClick={() => deleteProduct(p._id)}>Borrar</button>
+                <button onClick={() => deleteProduct(p._id || p.id)}>Borrar</button>
               </div>
-            }
+            )}
           </div>
         ))}
       </section>
-      {!responseServer.error.fetch && <ToastMessage color={"red"} msg={responseServer.notification} />}
+      
+      {!responseServer.error.fetch && responseServer.notification && <ToastMessage color={"red"} msg={responseServer.notification} />}
       {responseServer.success && <ToastMessage color={"green"} msg={responseServer.notification} />}
-      {/* {error.delete && <ToastMessage error={error.delete} color={"red"} />} */}
     </Layout>
   )
 }
