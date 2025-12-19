@@ -11,10 +11,7 @@ const Register = () => {
   const navigate = useNavigate()
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    })
+    setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
   const handleSubmit = async (e) => {
@@ -22,22 +19,24 @@ const Register = () => {
     try {
       const response = await fetch("http://localhost:3000/auth/register", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)
       })
 
       const responseData = await response.json()
 
-      if (!responseData.success) {
-        alert(responseData.error)
+      // Verificamos si response.ok es falso o success es falso
+      if (!response.ok || !responseData.success) {
+        alert(responseData.error || "Error al registrar")
+        return
       }
 
-      alert(`✅ Usuario creado con éxito: ${responseData.data._id}`)
+      alert("✅ Usuario creado con éxito. Ahora inicia sesión.")
       navigate("/login")
+      
     } catch (error) {
       console.log("Error al registrar el usuario", error)
+      alert("Error de conexión")
     }
   }
 
