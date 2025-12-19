@@ -11,34 +11,44 @@ const AddProduct = () => {
     stock: "",
     category: ""
   })
+  // Estado separado para el archivo
+  const [file, setFile] = useState(null)
 
   const navigate = useNavigate()
-
   const { token } = useAuth()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    const dataToSend = {
-      ...formData,
-      price: Number(formData.price),
-      stock: Number(formData.stock),
+    // 1. Usamos FormData para enviar archivos + texto
+    const dataToSend = new FormData()
+    dataToSend.append("name", formData.name)
+    dataToSend.append("description", formData.description)
+    dataToSend.append("price", formData.price)
+    dataToSend.append("stock", formData.stock)
+    dataToSend.append("category", formData.category)
+    
+    // Si el usuario seleccionó una imagen, la agregamos
+    if (file) {
+      dataToSend.append("image", file) 
     }
-
-    console.log(token)
 
     try {
       const response = await fetch(`http://localhost:3000/products`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          // NO PONER 'Content-Type': 'application/json' CUANDO SE USA FORMDATA
           "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify(dataToSend)
+        body: dataToSend
       })
 
+      const responseData = await response.json()
+
       if (!response.ok) {
-        alert("❌ Error al cargar el producto")
+        // Mostramos el error específico del backend (Zod o Multer)
+        const errorMsg = responseData.error ? JSON.stringify(responseData.error) : "Error desconocido"
+        alert("❌ Error: " + errorMsg)
         return
       }
 
@@ -50,15 +60,17 @@ const AddProduct = () => {
         stock: "",
         category: ""
       })
-      navigate("/")
+      setFile(null)
+      navigate("/") // Te manda al home para ver el producto nuevo
     } catch (error) {
-
+      console.error(error)
+      alert("Error de conexión al crear producto")
     }
   }
 
   const handleChange = (e) => {
-    const nombreDeInput = e.target.name
-    setFormData({ ...formData, [nombreDeInput]: e.target.value })
+    const { name, value } = e.target
+    setFormData({ ...formData, [name]: value })
   }
 
   return (
@@ -66,51 +78,65 @@ const AddProduct = () => {
       <div className="page-banner">Agregar Nuevo Producto</div>
 
       <section className="page-section">
-        <form className="form-container"
-          onSubmit={(e) => handleSubmit(e)}
-        >
+        <form className="form-container" onSubmit={handleSubmit}>
+          
+          {/* Input de IMAGEN (Nuevo) */}
+          <div style={{marginBottom: '10px'}}>
+            <label style={{display:'block', marginBottom:'5px'}}>Imagen del producto:</label>
+            <input 
+              type="file" 
+              accept="image/*"
+              onChange={(e) => setFile(e.target.files[0])}
+            />
+          </div>
+
           <input
             type="text"
-            placeholder="Nombre"
+            placeholder="Nombre (mín 4 letras)"
             name="name"
-            minLength={3}
-            maxLength={20}
-            onChange={(e) => handleChange(e)}
+            minLength={4} // Zod pide 4
+            maxLength={50}
+            onChange={handleChange}
             value={formData.name}
+            required
           />
           <input
             type="text"
-            placeholder="Descripción"
+            placeholder="Descripción (mín 10 letras)"
             name="description"
-            minLength={3}
+            minLength={10} // Zod pide 10
             maxLength={200}
-            onChange={(e) => handleChange(e)}
+            onChange={handleChange}
             value={formData.description}
+            required
           />
           <input
             type="number"
             placeholder="Precio"
             name="price"
-            min={0}
-            onChange={(e) => handleChange(e)}
+            min={10} // Zod pide min 10
+            onChange={handleChange}
             value={formData.price}
+            required
           />
           <input
             type="number"
             placeholder="Stock"
             name="stock"
             min={0}
-            onChange={(e) => handleChange(e)}
+            onChange={handleChange}
             value={formData.stock}
+            required
           />
           <input
             type="text"
-            placeholder="Categoría"
+            placeholder="Categoría (mín 3 letras)"
             name="category"
             minLength={3}
             maxLength={20}
-            onChange={(e) => handleChange(e)}
+            onChange={handleChange}
             value={formData.category}
+            required
           />
           <button type="submit">Agregar</button>
         </form>
