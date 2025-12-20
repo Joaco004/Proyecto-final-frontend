@@ -1,13 +1,12 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import Layout from "../components/Layout"
+import { ToastMessage } from "../components/ToastMessage" 
 
 const Register = () => {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: ""
-  })
-
+  const [formData, setFormData] = useState({ email: "", password: "" })
+  const [feedback, setFeedback] = useState({ show: false, msg: "", type: "success" })
+  
   const navigate = useNavigate()
 
   const handleChange = (e) => {
@@ -25,23 +24,33 @@ const Register = () => {
 
       const responseData = await response.json()
 
-      // Verificamos si response.ok es falso o success es falso
       if (!response.ok || !responseData.success) {
-        alert(responseData.error || "Error al registrar")
+        
+        setFeedback({ show: true, msg: responseData.error || "Error al registrar", type: "error" })
         return
       }
 
-      alert("✅ Usuario creado con éxito. Ahora inicia sesión.")
-      navigate("/login")
       
+      setFeedback({ show: true, msg: "¡Cuenta creada! Redirigiendo...", type: "success" })
+      
+      
+      setTimeout(() => navigate("/login"), 2000)
+
     } catch (error) {
-      console.log("Error al registrar el usuario", error)
-      alert("Error de conexión")
+      setFeedback({ show: true, msg: "Error de conexión con el servidor", type: "error" })
     }
   }
 
   return (
     <Layout>
+      {feedback.show && (
+        <ToastMessage 
+          msg={feedback.msg} 
+          type={feedback.type} 
+          onClose={() => setFeedback({ ...feedback, show: false })} 
+        />
+      )}
+
       <div className="center-auth">
         <form className="form-container" onSubmit={handleSubmit}>
           <h3>Crear Cuenta</h3>
@@ -59,7 +68,7 @@ const Register = () => {
             required
             onChange={handleChange}
           />
-          <button type="submit">Registrarse</button>
+          <button type="submit" className="btn-gamer-solid">Registrarse</button>
         </form>
       </div>
     </Layout>
