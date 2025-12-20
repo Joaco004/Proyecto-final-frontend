@@ -2,12 +2,11 @@ import { useNavigate } from "react-router-dom"
 import Layout from "../components/Layout"
 import { useAuth } from "../context/AuthContext"
 import { useState } from "react"
+import { ToastMessage } from "../components/ToastMessage"
 
 const Login = () => {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: ""
-  })
+  const [formData, setFormData] = useState({ email: "", password: "" })
+  const [feedback, setFeedback] = useState({ show: false, msg: "", type: "success" })
 
   const { login } = useAuth()
   const navigateUser = useNavigate()
@@ -27,25 +26,31 @@ const Login = () => {
       
       const responseData = await response.json()
 
-      // Si el status no es 200/201, hubo error
       if (!response.ok) {
-        // Mostramos el mensaje de error que viene del backend
-        alert(responseData.error || "Error al iniciar sesión")
+        setFeedback({ show: true, msg: responseData.error || "Credenciales inválidas", type: "error" })
         return
       }
 
-      // Login exitoso
       login(responseData.token)
-      navigateUser("/")
+      setFeedback({ show: true, msg: "¡Bienvenido, Gamer!", type: "success" })
+      
+      setTimeout(() => navigateUser("/"), 1500)
       
     } catch (error) {
-      console.log(error)
-      alert("Error de conexión con el servidor")
+      setFeedback({ show: true, msg: "Error de conexión", type: "error" })
     }
   }
 
   return (
     <Layout>
+      {feedback.show && (
+        <ToastMessage 
+          msg={feedback.msg} 
+          type={feedback.type} 
+          onClose={() => setFeedback({ ...feedback, show: false })} 
+        />
+      )}
+
       <div className="center-auth">
         <form className="form-container" onSubmit={handleSubmit}>
           <h3>Iniciar Sesión</h3>
@@ -63,7 +68,7 @@ const Login = () => {
             onChange={handleChange}
             required
           />
-          <button type="submit">Ingresar</button>
+          <button type="submit" className="btn-gamer-outline">Ingresar</button>
         </form>
       </div>
     </Layout>
