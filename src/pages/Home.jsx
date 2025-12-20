@@ -176,8 +176,21 @@ const Home = () => {
         ))}
       </section>
       
-      {!responseServer.error.fetch && responseServer.notification && <ToastMessage color={"red"} msg={responseServer.notification} />}
-      {responseServer.success && <ToastMessage color={"green"} msg={responseServer.notification} />}
+      {!responseServer.error.fetch && responseServer.notification && (<ToastMessage 
+           msg={responseServer.notification} 
+           type="error" 
+           onClose={() => setResponseServer({ ...responseServer, notification: null })}
+         />
+      )}
+
+      {responseServer.success && (
+        <ToastMessage 
+          msg={responseServer.notification} 
+          type="success" 
+          onClose={() => setResponseServer({ ...responseServer, success: null, notification: null })} 
+        />
+      )}
+
     </Layout>
   )
 }
