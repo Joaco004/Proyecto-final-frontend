@@ -1,5 +1,6 @@
 import { Link, NavLink, useNavigate } from "react-router-dom"
 import { useAuth } from "../context/AuthContext"
+import Footer from "./Footer"
 
 const Layout = ({ children }) => {
   const { user, logout } = useAuth()
@@ -42,23 +43,30 @@ const Layout = ({ children }) => {
           </li>
         </ul>
 
-        <div className="d-flex align-items-center gap-2">
+        <div className="d-flex align-items-center gap-3"> {/* gap-3 separa los botones */}
           {!user ? (
             <>
-              <Link to="/login" className="btn btn-outline-light btn-sm">Login</Link>
-              <Link to="/registro" className="btn btn-sm fw-bold text-white" style={{backgroundColor: '#fe6000'}}>
-                Registro
+              {/* Botón LOGIN con estilo Outline */}
+              <Link to="/login" className="btn-gamer-outline">
+                Ingresar
+              </Link>
+      
+              {/* Botón REGISTRO con estilo Sólido */}
+              <Link to="/registro" className="btn-gamer-solid">
+                Crear Cuenta
               </Link>
             </>
           ) : (
             <>
-              <span className="text-white small me-2 d-none d-lg-block">
-                {user.email?.split('@')[0]}
+              <span className="text-white fw-bold me-2 d-none d-lg-block" style={{fontSize: '0.9rem'}}>
+                👋 {user.email?.split('@')[0]}
               </span>
-              <Link to="/agregar-producto" className="btn btn-sm btn-outline-warning me-2">
+      
+              <Link to="/agregar-producto" className="btn-gamer-outline" style={{borderColor: '#00d604', color: '#00d604'}}>
                 + Vender
               </Link>
-              <button onClick={handleLogout} className="btn btn-sm btn-danger">
+      
+              <button onClick={handleLogout} className="btn btn-sm btn-danger fw-bold text-uppercase px-3">
                 Salir
               </button>
             </>
@@ -69,17 +77,12 @@ const Layout = ({ children }) => {
   </nav>
 </header>
 
-      {/* MAIN: Mantiene tu clase layout-main */}
       <main className="layout-main flex-grow-1">
         {children}
       </main>
 
-      {/* FOOTER: Mantiene tu clase layout-footer */}
-      <footer className="layout-footer text-center text-white py-4 mt-auto" style={{ backgroundColor: '#1f1f1f', borderTop: '1px solid #333' }}>
-        <div className="container">
-          <p className="mb-0">Sitio desarrollado por Joaquin Garinei</p>
-        </div>
-      </footer>
+      <Footer />
+      
     </div>
   )
 }
