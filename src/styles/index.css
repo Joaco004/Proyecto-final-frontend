@@ -15,7 +15,7 @@ body {
   padding: 0;
 }
 
-/* --- 1. LAYOUT & BANNER --- */
+
 .page-banner {
   background: linear-gradient(90deg, var(--cg-black) 0%, #3a3a3a 100%);
   border-bottom: 3px solid var(--cg-orange);
@@ -36,7 +36,7 @@ body {
   margin-bottom: 40px;
 }
 
-/* --- 2. FORMULARIOS (Login, Register, AddProduct) --- */
+
 .center-auth {
   display: flex;
   justify-content: center;
@@ -97,7 +97,7 @@ body {
   background-color: #d14d00;
 }
 
-/* --- 3. FILTROS (Home) --- */
+
 .filters-form {
   background-color: var(--cg-dark);
   padding: 20px;
@@ -130,7 +130,7 @@ body {
   background-color: var(--cg-orange);
 }
 
-/* --- 4. GRILLA DE PRODUCTOS (Home) --- */
+
 .products-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -188,18 +188,18 @@ body {
 }
 
 .cont-btn button:first-child {
-  background-color: #444; /* Editar */
+  background-color: #444; 
   color: white;
 }
 
 .cont-btn button:last-child {
-  background-color: #ff3333; /* Borrar */
+  background-color: #ff3333; 
   color: white;
 }
 
-/* --- 5. AGREGADOS NUEVOS (Navbar y Modales) --- */
 
-/* Ajustes de Navbar para que los links reaccionen al mouse */
+
+
 .navbar-nav .nav-link {
   text-transform: uppercase;
   font-weight: 500;
@@ -212,14 +212,14 @@ body {
   color: var(--cg-orange) !important;
 }
 
-/* Estilos para el Modal de Editar (UpdateProduct.jsx) */
+
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.85); /* Fondo oscuro transparente */
+  background-color: rgba(0, 0, 0, 0.85); 
   display: flex;
   justify-content: center;
   align-items: center;
@@ -258,4 +258,31 @@ body {
 .close-btn:hover {
   background-color: #333;
   color: white;
+}
+
+.navbar-brand {
+  font-family: 'Roboto', sans-serif; 
+  font-weight: 900 !important;  
+  font-size: 1.8rem !important;    
+  text-transform: uppercase;
+  letter-spacing: 1px;  
+  color: var(--text-white) !important; 
+  text-decoration: none !important;
+  text-shadow: 0 0 15px rgba(254, 96, 0, 0.4); 
+  display: flex;
+  align-items: center;
+  gap: 5px; 
+  transition: all 0.3s ease;
+}
+
+
+.brand-accent {
+  color: var(--cg-orange) !important;
+  font-style: italic;
+}
+
+/* Efecto al pasar el mouse por el logo */
+.navbar-brand:hover {
+  text-shadow: 0 0 25px rgba(254, 96, 0, 0.8); 
+  transform: scale(1.02); 
 }

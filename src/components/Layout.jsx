@@ -14,63 +14,60 @@ const Layout = ({ children }) => {
     // Agregué layout-container (opcional) pero mantengo la estructura flex para el footer
     <div className="d-flex flex-column min-vh-100">
       
-      {/* HEADER: Mantiene tu clase layout-header pero con estructura Bootstrap */}
-      <header className="layout-header">
-        <nav className="layout-nav navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-warning" 
-             style={{borderBottomColor: '#fe6000', borderBottomWidth: '3px'}}>
-          <div className="container">
-            
-            {/* LOGO */}
-            <Link className="navbar-brand fw-bold fst-italic text-uppercase" to="/" style={{ fontSize: '1.5rem' }}>
-              Tecno<span style={{ color: '#fe6000' }}>Store</span>
-            </Link>
+      {/* HEADER / NAVBAR */}
+<header>
+  <nav className="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-warning" 
+        style={{borderBottomColor: '#fe6000', borderBottomWidth: '3px'}}>
+    <div className="container">
+      
+      <Link className="navbar-brand" to="/">
+        ⚡ Tecno<span className="brand-accent">Store</span>_
+      </Link>
+      
 
-            {/* BOTÓN MÓVIL */}
-            <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-              <span className="navbar-toggler-icon"></span>
-            </button>
+      <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span className="navbar-toggler-icon"></span>
+      </button>
 
-            {/* LINKS */}
-            <div className="collapse navbar-collapse" id="navbarNav">
-              <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                <li className="nav-item">
-                  <NavLink className="nav-link" to="/">Nuestros productos</NavLink>
-                </li>
-                <li className="nav-item">
-                  <NavLink className="nav-link" to="/sobre-nosotros">Sobre nosotros</NavLink>
-                </li>
-                <li className="nav-item">
-                  <NavLink className="nav-link" to="/contacto">Contactanos</NavLink>
-                </li>
-              </ul>
+      <div className="collapse navbar-collapse" id="navbarNav">
+        <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+          <li className="nav-item">
+            <NavLink className="nav-link" to="/">Productos</NavLink>
+          </li>
+          <li className="nav-item">
+            <NavLink className="nav-link" to="/sobre-nosotros">Nosotros</NavLink>
+          </li>
+          <li className="nav-item">
+            <NavLink className="nav-link" to="/contacto">Contacto</NavLink>
+          </li>
+        </ul>
 
-              {/* USER ZONE */}
-              <div className="d-flex align-items-center gap-2">
-                {!user ? (
-                  <>
-                    <Link to="/login" className="btn btn-outline-light btn-sm">Login</Link>
-                    <Link to="/registro" className="btn btn-sm fw-bold text-white" style={{backgroundColor: '#fe6000'}}>
-                      Registro
-                    </Link>
-                  </>
-                ) : (
-                  <>
-                    <span className="text-white small me-2 d-none d-lg-block">
-                      {user.email}
-                    </span>
-                    <Link to="/agregar-producto" className="btn btn-sm btn-outline-warning me-2">
-                      Agregar producto
-                    </Link>
-                    <button onClick={handleLogout} className="btn btn-sm btn-danger">
-                      Cerrar sesión
-                    </button>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-        </nav>
-      </header>
+        <div className="d-flex align-items-center gap-2">
+          {!user ? (
+            <>
+              <Link to="/login" className="btn btn-outline-light btn-sm">Login</Link>
+              <Link to="/registro" className="btn btn-sm fw-bold text-white" style={{backgroundColor: '#fe6000'}}>
+                Registro
+              </Link>
+            </>
+          ) : (
+            <>
+              <span className="text-white small me-2 d-none d-lg-block">
+                {user.email?.split('@')[0]}
+              </span>
+              <Link to="/agregar-producto" className="btn btn-sm btn-outline-warning me-2">
+                + Vender
+              </Link>
+              <button onClick={handleLogout} className="btn btn-sm btn-danger">
+                Salir
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
 
       {/* MAIN: Mantiene tu clase layout-main */}
       <main className="layout-main flex-grow-1">
