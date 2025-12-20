@@ -360,3 +360,83 @@ body {
 .text-warning {
     color: var(--cg-orange) !important;
 }
+
+.toast-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  backdrop-filter: blur(5px);
+}
+
+.toast-box {
+  background: #101010;
+  padding: 30px;
+  border-radius: 10px;
+  border: 2px solid;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  position: relative;
+  animation: popIn 0.3s ease-out;
+}
+
+.toast-success {
+  border-color: #00d604;
+  box-shadow: 0 0 20px rgba(0, 214, 4, 0.25);
+}
+
+.toast-error {
+  border-color: #ff3333;
+  box-shadow: 0 0 20px rgba(255, 51, 51, 0.25);
+}
+
+.toast-title {
+  margin: 0 0 10px 0;
+  text-transform: uppercase;
+  font-size: 1.5rem;
+  font-weight: 900;
+}
+
+.text-success-gamer { color: #00d604; }
+.text-error-gamer { color: #ff3333; }
+
+.toast-message-text {
+  color: white;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+
+.toast-progress-bg {
+  margin-top: 15px;
+  width: 100%;
+  height: 3px;
+  background: #333;
+}
+
+.toast-progress-fill {
+  height: 100%;
+  width: 100%;
+  animation: shrink 3s linear forwards;
+}
+
+.bg-success-gamer { background-color: #00d604; }
+.bg-error-gamer { background-color: #ff3333; }
+
+
+@keyframes popIn {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes shrink {
+  from { width: 100%; }
+  to { width: 0%; }
+}
