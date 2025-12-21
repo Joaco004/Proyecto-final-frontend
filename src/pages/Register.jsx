@@ -25,22 +25,27 @@ const Register = () => {
       const responseData = await response.json()
 
       if (!response.ok || !responseData.success) {
-        
-        setFeedback({ show: true, msg: responseData.error || "Error al registrar", type: "error" })
+        let errorMsg = "Error al registrar";
+
+        if (responseData.error) {
+          if (typeof responseData.error === "string") {
+            errorMsg = responseData.error;
+          } else if (typeof responseData.error === "object") {
+            errorMsg = Object.values(responseData.error).flat().join(", ");
+          }
+        }
+
+        setFeedback({ show: true, msg: errorMsg, type: "error" })
         return
       }
 
-      
       setFeedback({ show: true, msg: "¡Cuenta creada! Redirigiendo...", type: "success" })
-      
-      
       setTimeout(() => navigate("/login"), 2000)
 
     } catch (error) {
-      setFeedback({ show: true, msg: "Error de conexión con el servidor", type: "error" })
+      setFeedback({ show: true, msg: "Error de conexión", type: "error" })
     }
   }
-
   return (
     <Layout>
       {feedback.show && (
