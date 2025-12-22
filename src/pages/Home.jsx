@@ -127,7 +127,6 @@ const Home = () => {
       <section>
         <form className="filters-form" onSubmit={handleSubmit}>
           <input type="text" name="name" placeholder="Buscar por nombre" onChange={handleChange} value={filters.name} />
-          <input type="number" name="stock" placeholder="Stock exacto" onChange={handleChange} value={filters.stock} />
           <select name="category" onChange={handleChange} value={filters.category}>
             <option value="">Todas las categorias</option>
             {CATEGORIES.map((cat) => (

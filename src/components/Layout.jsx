@@ -43,15 +43,15 @@ const Layout = ({ children }) => {
           </li>
         </ul>
 
-        <div className="d-flex align-items-center gap-3"> {/* gap-3 separa los botones */}
+        <div className="d-flex align-items-center gap-3"> 
           {!user ? (
             <>
-              {/* Botón LOGIN con estilo Outline */}
+              {/* Botón LOGIN con estilo */}
               <Link to="/login" className="btn-gamer-outline">
                 Ingresar
               </Link>
       
-              {/* Botón REGISTRO con estilo Sólido */}
+              {/* Botón REGISTRO con estilo */}
               <Link to="/registro" className="btn-gamer-solid">
                 Crear Cuenta
               </Link>
@@ -63,7 +63,7 @@ const Layout = ({ children }) => {
               </span>
       
               <Link to="/agregar-producto" className="btn-gamer-outline" style={{borderColor: '#00d604', color: '#00d604'}}>
-                + Vender
+                Nuevo Producto
               </Link>
       
               <button onClick={handleLogout} className="btn btn-sm btn-danger fw-bold text-uppercase px-3">
